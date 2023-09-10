@@ -23,8 +23,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Everyone.Base.DotNet.Tests" Version="1.0.0-dev001" />
-    <PackageReference Include="Everyone.TestRunner.VisualStudio.DotNet" Version="1.0.0-dev012" />
+    <PackageReference Include="Everyone.Base.DotNet.Tests" Version="1.0.0-dev002" />
+    <PackageReference Include="Everyone.TestRunner.VisualStudio.DotNet" Version="1.0.0-dev013" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.0" />
   </ItemGroup>
