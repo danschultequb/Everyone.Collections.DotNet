@@ -38,9 +38,11 @@
         /// The index that this <see cref="IndexableIterator{T}"/> is currently pointing at.
         /// </summary>
         public int CurrentIndex { get; }
+
+        public new IndexableIterator<T> Start();
     }
 
-    public class BasicIndexableIterator<T> : IteratorDecorator<T>, IndexableIterator<T>
+    public class BasicIndexableIterator<T> : IteratorDecorator<T, BasicIndexableIterator<T>>, IndexableIterator<T>
     {
         private int currentIndex;
 
@@ -73,6 +75,11 @@
                 this.currentIndex++;
             }
             return result;
+        }
+
+        IndexableIterator<T> IndexableIterator<T>.Start()
+        {
+            return this.Start();
         }
     }
 }
