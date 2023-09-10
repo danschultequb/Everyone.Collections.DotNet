@@ -42,6 +42,26 @@
         public new IndexableIterator<T> Start();
     }
 
+    public abstract class IndexableIteratorDecorator<T, TIterator> : IteratorDecorator<T, TIterator>, IndexableIterator<T> where TIterator : class, IndexableIterator<T>
+    {
+        private readonly IndexableIterator<T> innerIterator;
+
+        protected IndexableIteratorDecorator(IndexableIterator<T> innerIterator)
+            : base(innerIterator)
+        {
+            Pre.Condition.AssertNotNull(innerIterator, nameof(innerIterator));
+
+            this.innerIterator = innerIterator;
+        }
+
+        public int CurrentIndex => this.innerIterator.CurrentIndex;
+
+        IndexableIterator<T> IndexableIterator<T>.Start()
+        {
+            return this.Start();
+        }
+    }
+
     public class BasicIndexableIterator<T> : IteratorDecorator<T, BasicIndexableIterator<T>>, IndexableIterator<T>
     {
         private int currentIndex;
