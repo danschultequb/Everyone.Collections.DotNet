@@ -8,7 +8,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>Everyone.Collections.DotNet</PackageId>
     <VersionPrefix>1.0.0</VersionPrefix>
-    <VersionSuffix>dev006</VersionSuffix>
+    <VersionSuffix>dev007</VersionSuffix>
     <Title>Everyone.Collections.DotNet</Title>
     <Company>everyone</Company>
     <Authors>everyone</Authors>
@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
-    <PackageReference Include="Everyone.Base.DotNet" Version="1.0.0-dev022" />
+    <PackageReference Include="Everyone.Base.DotNet" Version="1.0.0-dev023" />
   </ItemGroup>
 
 </Project>
