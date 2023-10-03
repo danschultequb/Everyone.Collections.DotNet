@@ -150,6 +150,47 @@ namespace Everyone
                     IterateTest(new[] { 1, 2 });
                     IterateTest(new[] { 1, 2, 3 });
                 });
+
+                runner.TestMethod("IndexOf(T)", () =>
+                {
+                    runner.Test("with empty Indexable", (Test test) =>
+                    {
+                        Indexable<int> indexable = creator.Invoke(new int[0]);
+                        test.AssertNotNull(indexable);
+                        test.AssertEqual(0, indexable.Count);
+
+                        Result<int> indexOfResult = indexable.IndexOf(5);
+                        test.AssertNotNull(indexOfResult);
+
+                        test.AssertThrows(() => indexOfResult.Await(),
+                            new NotFoundException("Could not find the value: 5"));
+                    });
+
+                    runner.Test("with non-empty Indexable that doesn't contain the value", (Test test) =>
+                    {
+                        Indexable<int> indexable = creator.Invoke(new[] { 1, 2, 3 });
+                        test.AssertNotNull(indexable);
+                        test.AssertEqual(3, indexable.Count);
+
+                        Result<int> indexOfResult = indexable.IndexOf(5);
+                        test.AssertNotNull(indexOfResult);
+
+                        test.AssertThrows(() => indexOfResult.Await(),
+                            new NotFoundException("Could not find the value: 5"));
+                    });
+
+                    runner.Test("with non-empty Indexable that contains the value", (Test test) =>
+                    {
+                        Indexable<int> indexable = creator.Invoke(new[] { 1, 2, 3 });
+                        test.AssertNotNull(indexable);
+                        test.AssertEqual(3, indexable.Count);
+
+                        Result<int> indexOfResult = indexable.IndexOf(1);
+                        test.AssertNotNull(indexOfResult);
+
+                        test.AssertEqual(0, indexOfResult.Await());
+                    });
+                });
             });
         }
     }

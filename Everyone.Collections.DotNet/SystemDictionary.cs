@@ -71,9 +71,16 @@ namespace Everyone
             ((IDictionary<TKey, TValue>)this.dictionary).CopyTo(array, arrayIndex);
         }
 
-        public override TValue Get(TKey key)
+        public override Result<TValue> Get(TKey key)
         {
-            return this.dictionary[key];
+            return Result.Create(() =>
+            {
+                if (!this.TryGetValue(key,out TValue? result))
+                {
+                    throw new NotFoundException($"Could not find the key: {key}");
+                }
+                return result!;
+            });
         }
 
         public override Iterator<KeyValuePair<TKey, TValue>> Iterate()

@@ -45,7 +45,7 @@ namespace Everyone
         /// Get the value associated with the provided <paramref name="key"/>.
         /// </summary>
         /// <param name="key">The key of the value to return.</param>
-        public TValue Get(TKey key);
+        public Result<TValue> Get(TKey key);
 
         /// <summary>
         /// Get an <see cref="Iterator{T}"/> that will iterate through the entries of this
@@ -56,7 +56,7 @@ namespace Everyone
 
     public abstract class MapBase<TKey, TValue> : Map<TKey, TValue>
     {
-        public TValue this[TKey key] => this.Get(key);
+        public virtual TValue this[TKey key] => this.Get(key).Await();
 
         public abstract IEnumerable<TKey> Keys { get; }
 
@@ -66,7 +66,7 @@ namespace Everyone
 
         public abstract bool ContainsKey(TKey key);
 
-        public abstract TValue Get(TKey key);
+        public abstract Result<TValue> Get(TKey key);
 
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {

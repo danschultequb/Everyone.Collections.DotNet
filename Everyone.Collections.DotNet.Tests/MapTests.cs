@@ -145,8 +145,8 @@ namespace Everyone
                     runner.Test("with not found key", (Test test) =>
                     {
                         Map<int, char> map = creator(new (int, char)[0]);
-                        test.AssertThrows(() => map.Get(5),
-                            new System.Collections.Generic.KeyNotFoundException("The given key '5' was not present in the dictionary."));
+                        test.AssertThrows(() => map.Get(5).Await(),
+                            new NotFoundException("Could not find the key: 5"));
                     });
 
                     void CountTest((int, char)[] values, int? expected = null)
@@ -156,7 +156,7 @@ namespace Everyone
                             Map<int, char> map = creator(values);
                             foreach ((int,char) entry in values)
                             {
-                                test.AssertEqual(entry.Item2, map.Get(entry.Item1));
+                                test.AssertEqual(entry.Item2, map.Get(entry.Item1).Await());
                             }
                         });
                     }
@@ -172,8 +172,8 @@ namespace Everyone
                     runner.Test("with not found key", (Test test) =>
                     {
                         Map<int, char> map = creator(new (int, char)[0]);
-                        test.AssertThrows(() => map.Get(5),
-                            new System.Collections.Generic.KeyNotFoundException("The given key '5' was not present in the dictionary."));
+                        test.AssertThrows(() => { char _ = map[5]; },
+                            new NotFoundException("Could not find the key: 5"));
                     });
 
                     void CountTest((int, char)[] values, int? expected = null)

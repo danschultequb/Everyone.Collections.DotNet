@@ -37,6 +37,12 @@
         public T Get(int index);
 
         /// <summary>
+        /// Get the index of the provided <paramref name="value"/> in this <see cref="Indexable"/>.
+        /// </summary>
+        /// <param name="value">The value to look for.</param>
+        public Result<int> IndexOf(T value);
+
+        /// <summary>
         /// Get an <see cref="IndexableIterator{T}"/> that can be used to iterate through the
         /// values in this <see cref="Indexable{T}"/>.
         /// </summary>
@@ -60,6 +66,30 @@
         public abstract T Get(int index);
 
         public override abstract IndexableIterator<T> Iterate();
+
+        public virtual Result<int> IndexOf(T value)
+        {
+            return Result.Create(() =>
+            {
+                int? index = null;
+                using (IndexableIterator<T> iterator = this.Iterate())
+                {
+                    while (iterator.Next())
+                    {
+                        if (object.Equals(iterator.Current, value))
+                        {
+                            index = iterator.CurrentIndex;
+                            break;
+                        }
+                    }
+                }
+                if (index == null)
+                {
+                    throw new NotFoundException($"Could not find the value: {value}");
+                }
+                return index.Value;
+            });
+        }
 
         public virtual T this[int index]
         {
