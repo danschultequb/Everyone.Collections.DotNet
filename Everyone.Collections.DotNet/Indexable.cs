@@ -96,4 +96,28 @@
             get { return this.Get(index); }
         }
     }
+
+    public abstract class IndexableDecorator<T> : IndexableBase<T>
+    {
+        private readonly Indexable<T> innerIndexable;
+
+        protected IndexableDecorator(Indexable<T> innerIndexable)
+        {
+            Pre.Condition.AssertNotNull(innerIndexable, nameof(innerIndexable));
+
+            this.innerIndexable = innerIndexable;
+        }
+
+        public override int Count => this.innerIndexable.Count;
+
+        public override T Get(int index)
+        {
+            return this.innerIndexable.Get(index);
+        }
+
+        public override IndexableIterator<T> Iterate()
+        {
+            return this.innerIndexable.Iterate();
+        }
+    }
 }

@@ -29,7 +29,8 @@ namespace Everyone
         /// </summary>
         /// <param name="index">The index to change.</param>
         /// <param name="value">The value to assign to the provided index.</param>
-        public void Set(int index, T value);
+        /// <returns>This object for method chaining.</returns>
+        public MutableIndexable<T> Set(int index, T value);
 
         /// <summary>
         /// Get or set the value in this <see cref="MutableIndexable{T}"/> at the provided
@@ -39,14 +40,52 @@ namespace Everyone
         public new T this[int index] { get; set; }
     }
 
-    public abstract class MutableIndexableBase<T> : IndexableBase<T>, MutableIndexable<T>
+    public abstract class MutableIndexableBase<T,TMutableIndexable> : IndexableBase<T>, MutableIndexable<T>
+        where TMutableIndexable : MutableIndexable<T>
     {
-        public abstract void Set(int index, T value);
+        public abstract TMutableIndexable Set(int index, T value);
+
+        MutableIndexable<T> MutableIndexable<T>.Set(int index, T value)
+        {
+            return this.Set(index, value);
+        }
 
         public new T this[int index]
         {
             get { return base[index]; }
             set { this.Set(index, value); }
+        }
+    }
+
+    public class MutableIndexableDecorator<T, TMutableIndexable> : MutableIndexableBase<T, TMutableIndexable>
+        where TMutableIndexable : class, MutableIndexable<T>
+    {
+        private readonly MutableIndexable<T> innerIndexable;
+
+        protected MutableIndexableDecorator(MutableIndexable<T> innerIndexable)
+        {
+            Pre.Condition.AssertNotNull(innerIndexable, nameof(innerIndexable));
+
+            this.innerIndexable = innerIndexable;
+        }
+
+        public override int Count => this.innerIndexable.Count;
+
+        public override T Get(int index)
+        {
+            return this.innerIndexable.Get(index);
+        }
+
+        public override IndexableIterator<T> Iterate()
+        {
+            return this.innerIndexable.Iterate();
+        }
+
+        public override TMutableIndexable Set(int index, T value)
+        {
+            this.innerIndexable.Set(index, value);
+
+            return (this as TMutableIndexable)!;
         }
     }
 }

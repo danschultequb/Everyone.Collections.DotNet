@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Everyone
 {
@@ -39,7 +40,7 @@ namespace Everyone
         public new int Count { get; }
     }
 
-    public abstract class SetBase<T,TDerived> : IterableBase<T>, Set<T> where TDerived : class, Set<T>
+    public abstract class SetBase<T> : IterableBase<T>, Set<T>
     {
         protected SetBase()
         {
@@ -62,5 +63,59 @@ namespace Everyone
         public abstract bool Overlaps(System.Collections.Generic.IEnumerable<T> other);
 
         public abstract bool SetEquals(System.Collections.Generic.IEnumerable<T> other);
+    }
+
+    public abstract class SetDecorator<T> : SetBase<T>
+    {
+        private readonly Set<T> innerSet;
+
+        protected SetDecorator(Set<T> innerSet)
+        {
+            Pre.Condition.AssertNotNull(innerSet, nameof(innerSet));
+
+            this.innerSet = innerSet;
+        }
+
+        public override int Count => this.innerSet.Count;
+
+        public override bool Contains(T value)
+        {
+            return this.innerSet.Contains(value);
+        }
+
+        public override bool IsProperSubsetOf(IEnumerable<T> other)
+        {
+            return this.innerSet.IsProperSubsetOf(other);
+        }
+
+        public override bool IsProperSupersetOf(IEnumerable<T> other)
+        {
+            return this.innerSet.IsProperSupersetOf(other);
+        }
+
+        public override bool IsSubsetOf(IEnumerable<T> other)
+        {
+            return this.innerSet.IsSubsetOf(other);
+        }
+
+        public override bool IsSupersetOf(IEnumerable<T> other)
+        {
+            return this.innerSet.IsSupersetOf(other);
+        }
+
+        public override Iterator<T> Iterate()
+        {
+            return this.innerSet.Iterate();
+        }
+
+        public override bool Overlaps(IEnumerable<T> other)
+        {
+            return this.innerSet.Overlaps(other);
+        }
+
+        public override bool SetEquals(IEnumerable<T> other)
+        {
+            return this.innerSet.SetEquals(other);
+        }
     }
 }

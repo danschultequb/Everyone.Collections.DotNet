@@ -9,7 +9,7 @@ namespace Everyone
     /// A mapping between values of type <typeparamref name="TKey"/> and
     /// <typeparamref name="TValue"/>.
     /// </summary>
-    public static partial class Map
+    public static class Map
     {
         public static MutableMap<TKey, TValue> Create<TKey, TValue>(params (TKey, TValue)[] values) where TKey : notnull
         {
@@ -46,6 +46,16 @@ namespace Everyone
         /// </summary>
         /// <param name="key">The key of the value to return.</param>
         public Result<TValue> Get(TKey key);
+
+        /// <summary>
+        /// Try to get the value associated with the provided <paramref name="key"/>. Return
+        /// whether the key is found.
+        /// </summary>
+        /// <param name="key">The key of the value to return.</param>
+        /// <param name="value">The value associated with the provided <paramref name="key"/> if
+        /// the <paramref name="key"/> is found. If the <paramref name="key"/> is not found, then
+        /// this will be set to null.</param>
+        public new bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value);
 
         /// <summary>
         /// Get an <see cref="Iterator{T}"/> that will iterate through the entries of this
@@ -85,6 +95,44 @@ namespace Everyone
         IEnumerator IEnumerable.GetEnumerator()
         {
             return this.Iterate();
+        }
+    }
+
+    public abstract class MapDecorator<TKey,TValue> : MapBase<TKey,TValue>
+    {
+        private readonly Map<TKey, TValue> innerMap;
+
+        protected MapDecorator(Map<TKey, TValue> innerMap)
+        {
+            Pre.Condition.AssertNotNull(innerMap, nameof(innerMap));
+
+            this.innerMap = innerMap;
+        }
+
+        public override IEnumerable<TKey> Keys => this.innerMap.Keys;
+
+        public override IEnumerable<TValue> Values => this.innerMap.Values;
+
+        public override int Count => this.innerMap.Count;
+
+        public override bool ContainsKey(TKey key)
+        {
+            return this.innerMap.ContainsKey(key);
+        }
+
+        public override Result<TValue> Get(TKey key)
+        {
+            return this.innerMap.Get(key);
+        }
+
+        public override Iterator<KeyValuePair<TKey, TValue>> Iterate()
+        {
+            return this.innerMap.Iterate();
+        }
+
+        public override bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)
+        {
+            return this.innerMap.TryGetValue(key, out value);
         }
     }
 }

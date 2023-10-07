@@ -69,7 +69,8 @@
         public bool Contains(T value);
     }
 
-    public abstract class StackBase<T, TStack> : Stack<T> where TStack : class, Stack<T>
+    public abstract class StackBase<T, TStack> : Stack<T>
+        where TStack : class, Stack<T>
     {
         public abstract int Count { get; }
 
@@ -126,7 +127,8 @@
         public abstract Result<T> Peek();
     }
 
-    public abstract class StackDecorator<T,TStack> : StackBase<T,TStack> where TStack : class, Stack<T>
+    public abstract class StackDecorator<T,TStack> : StackBase<T,TStack>
+        where TStack : class, Stack<T>
     {
         private readonly Stack<T> innerStack;
 

@@ -163,7 +163,7 @@ namespace Everyone
                         test.AssertNotNull(indexOfResult);
 
                         test.AssertThrows(() => indexOfResult.Await(),
-                            new NotFoundException("Could not find the value: 5"));
+                            new NotFoundException("Could not find 5."));
                     });
 
                     runner.Test("with non-empty Indexable that doesn't contain the value", (Test test) =>
@@ -176,7 +176,7 @@ namespace Everyone
                         test.AssertNotNull(indexOfResult);
 
                         test.AssertThrows(() => indexOfResult.Await(),
-                            new NotFoundException("Could not find the value: 5"));
+                            new NotFoundException("Could not find 5."));
                     });
 
                     runner.Test("with non-empty Indexable that contains the value", (Test test) =>

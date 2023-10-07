@@ -18,7 +18,7 @@ namespace Everyone
         }
     }
 
-    public class SystemList<T> : ListBase<T>
+    public class SystemList<T> : ListBase<T,SystemList<T>>
     {
         private readonly System.Collections.Generic.List<T> list;
 
@@ -43,18 +43,22 @@ namespace Everyone
             return this.list[index];
         }
 
-        public override void Set(int index, T value)
+        public override SystemList<T> Set(int index, T value)
         {
             Pre.Condition.AssertAccessIndex(index, this, nameof(index));
 
             this.list[index] = value;
+
+            return this;
         }
 
-        public override void Insert(int index, T value)
+        public override SystemList<T> Insert(int index, T value)
         {
             Pre.Condition.AssertInsertIndex(index, this, nameof(index));
 
             this.list.Insert(index, value);
+
+            return this;
         }
 
         public override IndexableIterator<T> Iterate()
@@ -62,9 +66,12 @@ namespace Everyone
             return IndexableIterator.Create(this.list.Iterate());
         }
 
-        public override int IndexOf(T item)
+        public override Result<int> IndexOf(T item)
         {
-            return this.list.IndexOf(item);
+            int itemIndex = this.list.IndexOf(item);
+            return itemIndex == -1
+                ? Result.Create<int>(new NotFoundException($"Could not find {item}."))
+                : Result.Create(itemIndex);
         }
 
         public override void RemoveAt(int index)

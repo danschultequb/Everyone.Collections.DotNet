@@ -93,9 +93,22 @@ namespace Everyone
         /// <returns>Whether the provided <paramref name="values"/> existed in this
         /// <see cref="Set{T}"/>.</returns>
         public System.Collections.Generic.IEnumerable<(T, bool)> RemoveAll(System.Collections.Generic.IEnumerable<T> values);
+
+        public new bool IsProperSubsetOf(IEnumerable<T> other);
+
+        public new bool IsProperSupersetOf(IEnumerable<T> other);
+
+        public new bool IsSubsetOf(IEnumerable<T> other);
+
+        public new bool IsSupersetOf(IEnumerable<T> other);
+
+        public new bool Overlaps(IEnumerable<T> other);
+
+        public new bool SetEquals(IEnumerable<T> other);
     }
 
-    public abstract class MutableSetBase<T,TDerived> : SetBase<T,TDerived>, MutableSet<T> where TDerived : class, MutableSet<T>
+    public abstract class MutableSetBase<T,TMutableSet> : SetBase<T>, MutableSet<T>
+        where TMutableSet : class, MutableSet<T>
     {
         public bool IsReadOnly => false;
 
@@ -109,7 +122,7 @@ namespace Everyone
         /// </summary>
         /// <param name="value">The value to add.</param>
         /// <returns>This object for method chaining.</returns>
-        public abstract TDerived Add(T value);
+        public abstract TMutableSet Add(T value);
 
         MutableSet<T> MutableSet<T>.Add(T value, out bool added)
         {
@@ -123,7 +136,7 @@ namespace Everyone
         /// <param name="added">Whether the value was added. This will be false if the value
         /// already existed in this <see cref="Set{T}"/>.</param>
         /// <returns>This object for method chaining.</returns>
-        public abstract TDerived Add(T value, out bool added);
+        public abstract TMutableSet Add(T value, out bool added);
 
         MutableSet<T> MutableSet<T>.AddAll(System.Collections.Generic.IEnumerable<T> values)
         {
@@ -135,7 +148,7 @@ namespace Everyone
         /// </summary>
         /// <param name="values">The values to add.</param>
         /// <returns>This object for method chaining.</returns>
-        public virtual TDerived AddAll(System.Collections.Generic.IEnumerable<T> values)
+        public virtual TMutableSet AddAll(System.Collections.Generic.IEnumerable<T> values)
         {
             Pre.Condition.AssertNotNull(values, nameof(values));
 
@@ -144,7 +157,7 @@ namespace Everyone
                 this.Add(value);
             }
 
-            return (this as TDerived)!;
+            return (this as TMutableSet)!;
         }
 
         MutableSet<T> MutableSet<T>.AddAll(System.Collections.Generic.IEnumerable<T> values, out System.Collections.Generic.IEnumerable<(T, bool)> added)
@@ -160,7 +173,7 @@ namespace Everyone
         /// values will be false if the corresponding key already existed in this
         /// <see cref="Set{T}"/>.
         /// <returns>This object for method chaining.</returns>
-        public virtual TDerived AddAll(System.Collections.Generic.IEnumerable<T> values, out System.Collections.Generic.IEnumerable<(T, bool)> added)
+        public virtual TMutableSet AddAll(System.Collections.Generic.IEnumerable<T> values, out System.Collections.Generic.IEnumerable<(T, bool)> added)
         {
             Pre.Condition.AssertNotNull(values, nameof(values));
 
@@ -173,7 +186,7 @@ namespace Everyone
             }
             added = addedList;
 
-            return (this as TDerived)!;
+            return (this as TMutableSet)!;
         }
 
         bool ISet<T>.Add(T item)
@@ -214,6 +227,105 @@ namespace Everyone
                 result.Add((value, this.Remove(value)));
             }
             return result;
+        }
+    }
+
+    public abstract class MutableSetDecorator<T,TMutableSet> : MutableSetBase<T,TMutableSet>
+        where TMutableSet : class, MutableSet<T>
+    {
+        private readonly MutableSet<T> innerSet;
+
+        protected MutableSetDecorator(MutableSet<T> innerSet)
+        {
+            Pre.Condition.AssertNotNull(innerSet, nameof(innerSet));
+
+            this.innerSet = innerSet;
+        }
+
+        public override int Count => this.innerSet.Count;
+
+        public override TMutableSet Add(T value)
+        {
+            this.innerSet.Add(value);
+
+            return (this as TMutableSet)!;
+        }
+
+        public override TMutableSet Add(T value, out bool added)
+        {
+            this.innerSet.Add(value, out added);
+
+            return (this as TMutableSet)!;
+        }
+
+        public override void Clear()
+        {
+            this.innerSet.Clear();
+        }
+
+        public override bool Contains(T value)
+        {
+            return this.innerSet.Contains(value);
+        }
+
+        public override void CopyTo(T[] array, int arrayIndex)
+        {
+            this.innerSet.CopyTo(array, arrayIndex);
+        }
+
+        public override void IntersectWith(IEnumerable<T> other)
+        {
+            this.innerSet.IntersectWith(other);
+        }
+
+        public override bool IsProperSubsetOf(IEnumerable<T> other)
+        {
+            return this.innerSet.IsProperSubsetOf(other);
+        }
+
+        public override bool IsProperSupersetOf(IEnumerable<T> other)
+        {
+            return this.innerSet.IsProperSupersetOf(other);
+        }
+
+        public override bool IsSubsetOf(IEnumerable<T> other)
+        {
+            return this.innerSet.IsSubsetOf(other);
+        }
+
+        public override bool IsSupersetOf(IEnumerable<T> other)
+        {
+            return this.innerSet.IsSupersetOf(other);
+        }
+
+        public override Iterator<T> Iterate()
+        {
+            return this.innerSet.Iterate();
+        }
+
+        public override bool Overlaps(IEnumerable<T> other)
+        {
+            return this.innerSet.Overlaps(other);
+        }
+
+        public override bool Remove(T value)
+        {
+            return this.innerSet.Remove(value);
+        }
+
+        public override bool SetEquals(IEnumerable<T> other)
+        {
+            return this.innerSet.SetEquals(other);
+        }
+
+        public override void SymmetricExceptWith(IEnumerable<T> other)
+        {
+            this.innerSet.SymmetricExceptWith(other);
+        }
+
+        public override void UnionWith(IEnumerable<T> other)
+        {
+            this.innerSet.UnionWith(other);
         }
     }
 }

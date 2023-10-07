@@ -27,7 +27,8 @@ namespace Everyone
         }
     }
 
-    public class SystemDictionary<TKey,TValue> : MutableMapBase<TKey,TValue> where TKey : notnull
+    public class SystemDictionary<TKey,TValue> : MutableMapBase<TKey,TValue,SystemDictionary<TKey,TValue>>
+        where TKey : notnull
     {
         private readonly Dictionary<TKey, TValue> dictionary;
 
@@ -45,9 +46,9 @@ namespace Everyone
             return new SystemDictionary<TKey, TValue>(values);
         }
 
-        public override ICollection<TKey> Keys => this.dictionary.Keys;
+        public override Iterable<TKey> Keys => List.Create<TKey>(this.dictionary.Keys);
 
-        public override ICollection<TValue> Values => this.dictionary.Values;
+        public override Iterable<TValue> Values => List.Create<TValue>(this.dictionary.Values);
 
         public override int Count => this.dictionary.Count;
 
@@ -98,13 +99,14 @@ namespace Everyone
             return ((IDictionary<TKey,TValue>)this.dictionary).Remove(item);
         }
 
-        public override void Set(TKey key, TValue value)
+        public override SystemDictionary<TKey,TValue> Set(TKey key, TValue value)
         {
             if (!this.dictionary.TryAdd(key, value))
             {
                 this.dictionary.Remove(key);
                 this.dictionary.Add(key, value);
             }
+            return this;
         }
 
         public override bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)

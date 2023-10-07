@@ -3,7 +3,7 @@
     /// <summary>
     /// A collection of values that can be iterated over.
     /// </summary>
-    public static partial class Iterable
+    public static class Iterable
     {
         public static Iterable<T> Create<T>(params T[] values)
         {
@@ -48,6 +48,23 @@
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return this.Iterate();
+        }
+    }
+
+    public abstract class IterableDecorator<T> : IterableBase<T>
+    {
+        private readonly Iterable<T> innerIterable;
+
+        protected IterableDecorator(Iterable<T> innerIterable)
+        {
+            Pre.Condition.AssertNotNull(innerIterable, nameof(innerIterable));
+
+            this.innerIterable = innerIterable;
+        }
+
+        public override Iterator<T> Iterate()
+        {
+            return this.innerIterable.Iterate();
         }
     }
 }
