@@ -63,6 +63,11 @@ namespace Everyone
         public abstract bool Overlaps(System.Collections.Generic.IEnumerable<T> other);
 
         public abstract bool SetEquals(System.Collections.Generic.IEnumerable<T> other);
+
+        public override string ToString()
+        {
+            return Enumerables.ToString(this, start: '{', end: '}');
+        }
     }
 
     public abstract class SetDecorator<T> : SetBase<T>

@@ -119,5 +119,20 @@
         {
             return this.innerIndexable.Iterate();
         }
+
+        public override string ToString()
+        {
+            return this.innerIndexable.ToString()!;
+        }
+
+        public override bool Equals(object? rhs)
+        {
+            return this.innerIndexable.Equals(rhs);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.innerIndexable.GetHashCode();
+        }
     }
 }

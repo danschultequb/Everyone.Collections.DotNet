@@ -49,6 +49,27 @@
         {
             return this.Iterate();
         }
+
+        public override string ToString()
+        {
+            return Enumerables.ToString(this);
+        }
+
+        public override bool Equals(object? rhs)
+        {
+            return rhs is System.Collections.IEnumerable rhsEnumerable &&
+                Enumerables.SequenceEqual(this, rhsEnumerable);
+        }
+
+        public override int GetHashCode()
+        {
+            HashCode hashCode = HashCode.Create();
+            foreach (T value in this)
+            {
+                hashCode.Add(value?.GetHashCode());
+            }
+            return hashCode.Value;
+        }
     }
 
     public abstract class IterableDecorator<T> : IterableBase<T>
@@ -65,6 +86,21 @@
         public override Iterator<T> Iterate()
         {
             return this.innerIterable.Iterate();
+        }
+
+        public override string ToString()
+        {
+            return this.innerIterable.ToString()!;
+        }
+
+        public override bool Equals(object? rhs)
+        {
+            return this.innerIterable.Equals(rhs);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.innerIterable.GetHashCode();
         }
     }
 }
